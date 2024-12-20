@@ -142,87 +142,137 @@
     </div>
 
     <script>
-        const productContainer = document.getElementById('productContainer');
-        const addProductButton = document.getElementById('addProductButton');
-        const feedbackContainer = document.getElementById('feedbackContainer');
-        const contactContainer = document.getElementById('contactContainer');
+    const productContainer = document.getElementById('productContainer');
+    const addProductButton = document.getElementById('addProductButton');
+    const contactContainer = document.getElementById('contactContainer');
+    const addContactButton = document.getElementById('addContactButton');
 
-        // Ürünleri localStorage'dan yükle
-        function loadProducts() {
-            const products = JSON.parse(localStorage.getItem('products')) || [];
-            products.forEach(product => {
-                displayProduct(product);
-            });
-        }
-
-        // Ürünleri göster
-        function displayProduct(product) {
-            const productItem = document.createElement('div');
-            productItem.className = 'product-item';
-            productItem.innerHTML = `
-                <span>
-                    <p>Ürün İsmi: ${product.name}</p>
-                    <p>Ürün Açıklaması: ${product.description}</p>
-                    <p>Ürün Fiyatı: ${product.price} TL</p>
-                    <img src="${product.image}" alt="${product.name}" style="width: 50px; height: 50px;">
-                </span>
-                <button class="delete-button">Sil</button>
-            `;
-
-            productContainer.appendChild(productItem);
-
-            // Silme butonuna event listener ekle
-            productItem.querySelector('.delete-button').addEventListener('click', function() {
-                productContainer.removeChild(productItem);
-                removeProductFromStorage(product.name);
-            });
-        }
-
-        // Ürünü localStorage'dan sil
-        function removeProductFromStorage(productName) {
-            const products = JSON.parse(localStorage.getItem('products')) || [];
-            const updatedProducts = products.filter(product => product.name !== productName);
-            localStorage.setItem('products', JSON.stringify(updatedProducts));
-        }
-
-        addProductButton.addEventListener('click', function() {
-            const productName = document.getElementById('productName').value;
-            const productDescription = document.getElementById('productDescription').value;
-            const productPrice = document.getElementById('productPrice').value;
-            const productImage = document.getElementById('productImage').value;
-
-            if (productName && productDescription && productPrice && productImage) {
-                const product = {
-                    name: productName,
-                    description: productDescription,
-                    price: productPrice,
-                    image: productImage
-                };
-
-                // Ürünü localStorage'a kaydet
-                const products = JSON.parse(localStorage.getItem('products')) || [];
-                products.push(product);
-                localStorage.setItem('products', JSON.stringify(products));
-
-                displayProduct(product);
-
-                // Girdi leri temizle
-                document.getElementById('productName').value = '';
-                document.getElementById('productDescription').value = '';
-                document.getElementById('productPrice').value = '';
-                document.getElementById('productImage').value = '';
-            } else {
-                alert('Lütfen tüm alanları doldurunuz.');
-            }
+    // Ürünleri localStorage'dan yükle
+    function loadProducts() {
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        products.forEach(product => {
+            displayProduct(product);
         });
+    }
 
-        // Sayfa yüklendiğinde ürünleri yükle
-        window.onload = function() {
-            loadProducts();
-            displayFeedback();
-            displayContactData();
-        };
-    </script>
+    // Ürünleri göster
+    function displayProduct(product) {
+        const productItem = document.createElement('div');
+        productItem.className = 'product-item';
+        productItem.innerHTML = `
+            <span>
+                <p>Ürün İsmi: ${product.name}</p>
+                <p>Ürün Açıklaması: ${product.description}</p>
+                <p>Ürün Fiyatı: ${product.price} TL</p>
+                <img src="${product.image}" alt="${product.name}" style="width: 50px; height: 50px;">
+            </span>
+            <button class="delete-button">Sil</button>
+        `;
+
+        productContainer.appendChild(productItem);
+
+        // Silme butonuna event listener ekle
+        productItem.querySelector('.delete-button').addEventListener('click', function() {
+            productContainer.removeChild(productItem);
+            removeProductFromStorage(product.name);
+        });
+    }
+
+    // Ürünü localStorage'dan sil
+    function removeProductFromStorage(productName) {
+        const products = JSON.parse(localStorage.getItem('products')) || [];
+        const updatedProducts = products.filter(product => product.name !== productName);
+        localStorage.setItem('products', JSON.stringify(updatedProducts));
+    }
+
+    // İletişim verilerini localStorage'dan yükle
+    function loadContactData() {
+        const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+        contacts.forEach(contact => {
+            displayContact(contact);
+        });
+    }
+
+    // İletişim verilerini göster
+    function displayContact(contact) {
+        const contactItem = document.createElement('div');
+        contactItem.className = 'feedback-item';
+        contactItem.innerHTML = `
+            <p>İsim: ${contact.name}</p>
+            <p>Email: ${contact.email}</p>
+            <p>Mesaj: ${contact.message}</p>
+        `;
+
+        contactContainer.appendChild(contactItem);
+    }
+
+    // İletişim verisi ekleme butonuna event listener ekle
+    addContactButton.addEventListener('click', function() {
+        const contactName = document.getElementById('contactName').value;
+        const contactEmail = document.getElementById('contactEmail').value;
+        const contactMessage = document.getElementById('contactMessage').value;
+
+        if (contactName && contactEmail && contactMessage) {
+            const contact = {
+                name: contactName,
+                email: contactEmail,
+                message: contactMessage
+            };
+
+            // İletişim verisini localStorage'a kaydet
+            const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+            contacts.push(contact);
+            localStorage.setItem('contacts', JSON.stringify(contacts));
+
+            displayContact(contact);
+
+            // Girdi leri temizle
+            document.getElementById('contactName').value = '';
+            document.getElementById('contactEmail').value = '';
+            document.getElementById('contactMessage').value = '';
+        } else {
+            alert('Lütfen tüm alanları doldurunuz.');
+        }
+    });
+
+    addProductButton.addEventListener('click', function() {
+        const productName = document.getElementById('productName').value;
+        const productDescription = document.getElementById('productDescription').value;
+        const productPrice = document.getElementById('productPrice').value;
+        const productImage = document.getElementById('productImage').value;
+
+        if (productName && productDescription && productPrice && productImage) {
+            const product = {
+                name: productName,
+                description: productDescription,
+                price: productPrice,
+                image: productImage
+            };
+
+            // Ürünü localStorage'a kaydet
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            products.push(product);
+            localStorage.setItem('products', JSON.stringify(products));
+
+            displayProduct(product);
+
+            // Girdi leri temizle
+            document.getElementById('productName').value = '';
+            document.getElementById(' productDescription').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productImage').value = '';
+        } else {
+            alert('Lütfen tüm alanları doldurunuz.');
+        }
+    });
+
+    // Sayfa yüklendiğinde ürünleri ve iletişim verilerini yükle
+    window.onload = function() {
+        loadProducts();
+        loadContactData(); // İletişim verilerini yükle
+    };
+</script>
+    
 </body>
 
 </html>
