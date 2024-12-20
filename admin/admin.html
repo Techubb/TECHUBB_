@@ -1,1 +1,228 @@
+<!DOCTYPE html>
+<html lang="tr">
 
+<head>
+    <meta charset="UTF-8">
+    <title>TechHub Elektronik - Admin Paneli</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --siyah: #1a1a1a;
+            --beyaz: #ffffff;
+            --sari: #FFD700;
+            --turuncu: #0dfc05;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: var(--beyaz);
+            color: var(--siyah);
+        }
+
+        .container {
+            width: 80%;
+            margin: 20px auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .product-form {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid var(--sari);
+            border-radius: 5px;
+            background-color: var(--beyaz);
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--sari);
+            border-radius: 5px;
+        }
+
+        .add-button {
+            background-color: var(--siyah);
+            color: var(--beyaz);
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .add-button:hover {
+            background-color: var(--turuncu);
+        }
+
+        .product-list {
+            margin-top: 20px;
+            border: 1px solid var(--sari);
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid var(--sari);
+        }
+
+        .delete-button {
+            background-color: var(--turuncu);
+            color: var(--beyaz);
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .delete-button:hover {
+            background-color: var(--siyah);
+        }
+
+        .feedback-list {
+            margin-top: 20px;
+            border: 1px solid var(--sari);
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .feedback-item {
+            padding: 10px;
+            border-bottom: 1px solid var(--sari);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>TechHub Elektronik - Admin Paneli</h1>
+
+        <div class="product-form">
+            <h2>Yeni Ürün Ekle</h2>
+            <div class="input-group">
+                <input type="text" id="productName" placeholder="Ürün Adı" required>
+            </div>
+            <div class="input-group">
+                <input type="text" id="productDescription" placeholder="Ürün Açıklaması" required>
+            </div>
+            <div class="input-group">
+                <input type="text" id="productPrice" placeholder="Ürün Fiyatı" required>
+            </div>
+            <div class="input-group">
+                <input type="text" id="productImage" placeholder="Ürün Resim Linki" required>
+            </div>
+            <button class="add-button" id="addProductButton">Ürün Ekle</button>
+        </div>
+
+        <div class="product-list">
+            <h2>Ürünler</h2>
+            <div id="productContainer"></div>
+        </div>
+
+        <div class="contact-list">
+            <h2>İletişim Verileri</h2>
+            <div id="contactContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const productContainer = document.getElementById('productContainer');
+        const addProductButton = document.getElementById('addProductButton');
+        const feedbackContainer = document.getElementById('feedbackContainer');
+        const contactContainer = document.getElementById('contactContainer');
+
+        // Ürünleri localStorage'dan yükle
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            products.forEach(product => {
+                displayProduct(product);
+            });
+        }
+
+        // Ürünleri göster
+        function displayProduct(product) {
+            const productItem = document.createElement('div');
+            productItem.className = 'product-item';
+            productItem.innerHTML = `
+                <span>
+                    <p>Ürün İsmi: ${product.name}</p>
+                    <p>Ürün Açıklaması: ${product.description}</p>
+                    <p>Ürün Fiyatı: ${product.price} TL</p>
+                    <img src="${product.image}" alt="${product.name}" style="width: 50px; height: 50px;">
+                </span>
+                <button class="delete-button">Sil</button>
+            `;
+
+            productContainer.appendChild(productItem);
+
+            // Silme butonuna event listener ekle
+            productItem.querySelector('.delete-button').addEventListener('click', function() {
+                productContainer.removeChild(productItem);
+                removeProductFromStorage(product.name);
+            });
+        }
+
+        // Ürünü localStorage'dan sil
+        function removeProductFromStorage(productName) {
+            const products = JSON.parse(localStorage.getItem('products')) || [];
+            const updatedProducts = products.filter(product => product.name !== productName);
+            localStorage.setItem('products', JSON.stringify(updatedProducts));
+        }
+
+        addProductButton.addEventListener('click', function() {
+            const productName = document.getElementById('productName').value;
+            const productDescription = document.getElementById('productDescription').value;
+            const productPrice = document.getElementById('productPrice').value;
+            const productImage = document.getElementById('productImage').value;
+
+            if (productName && productDescription && productPrice && productImage) {
+                const product = {
+                    name: productName,
+                    description: productDescription,
+                    price: productPrice,
+                    image: productImage
+                };
+
+                // Ürünü localStorage'a kaydet
+                const products = JSON.parse(localStorage.getItem('products')) || [];
+                products.push(product);
+                localStorage.setItem('products', JSON.stringify(products));
+
+                displayProduct(product);
+
+                // Girdi leri temizle
+                document.getElementById('productName').value = '';
+                document.getElementById('productDescription').value = '';
+                document.getElementById('productPrice').value = '';
+                document.getElementById('productImage').value = '';
+            } else {
+                alert('Lütfen tüm alanları doldurunuz.');
+            }
+        });
+
+        // Sayfa yüklendiğinde ürünleri yükle
+        window.onload = function() {
+            loadProducts();
+            displayFeedback();
+            displayContactData();
+        };
+    </script>
+</body>
+
+</html>
